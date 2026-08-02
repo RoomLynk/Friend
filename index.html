@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Friendship Day – Book Card (Bestie)</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet"/>
+    <style>
+        /* ---------- Reset & Base ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto', sans-serif;
+            background: radial-gradient(ellipse at 30% 20%, #6B21A8, #9D174D);
+            padding: 20px;
+            position: relative;
+        }
+
+        /* ---------- Subtle geometric pattern ---------- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---------- Book Wrapper ---------- */
+        .book-wrapper {
+            position: relative;
+            z-index: 1;
+            perspective: 1500px;
+            width: 100%;
+            max-width: 420px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+
+        /* ---------- Book (vertical) ---------- */
+        .book {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 0.72 / 1;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            cursor: pointer;
+        }
+
+        /* ----- Book Cover (front) ----- */
+        .book-cover {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            transform-origin: left center;
+            transform: rotateY(0deg);
+            transition: transform 1.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 8px 4px 4px 8px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(253, 224, 71, 0.15);
+            background: linear-gradient(145deg, #F472B6, #BE185D);
+            border: 1px solid rgba(253, 224, 71, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Spine effect */
+        .book-cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 16px;
+            height: 100%;
+            background: linear-gradient(180deg, #BE185D, #831843);
+            border-radius: 8px 0 0 8px;
+            box-shadow: inset -2px 0 8px rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(253, 224, 71, 0.08);
+        }
+
+        /* Cover inner (back side) */
+        .book-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, #BE185D, #831843);
+            border-radius: 8px 4px 4px 8px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: rotateY(180deg);
+            border: 1px solid rgba(253, 224, 71, 0.06);
+        }
+
+        .book.open .book-cover {
+            transform: rotateY(-180deg);
+        }
+
+        .cover-title {
+            font-family: 'Lobster', cursive;
+            font-size: clamp(2.2rem, 10vw, 3.4rem);
+            color: #FDF2F8;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: 2px;
+            z-index: 1;
+            line-height: 1.1;
+        }
+        .cover-sub {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            color: #FDE047;
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            letter-spacing: 4px;
+            margin-top: 6px;
+            z-index: 1;
+            text-transform: uppercase;
+        }
+        .cover-decoration {
+            position: absolute;
+            bottom: 18%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #FDE047, transparent);
+            opacity: 0.4;
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        /* ----- Book Page (inside) ----- */
+        .book-page {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: linear-gradient(160deg, #FFFBEB, #FEF3C7);
+            border-radius: 4px 8px 8px 4px;
+            box-shadow:
+                inset 0 0 0 1px rgba(148, 163, 184, 0.15),
+                0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 20px;
+            text-align: center;
+            overflow-y: auto;
+            border-left: 2px solid rgba(253, 224, 71, 0.2);
+        }
+
+        .page-heading {
+            font-family: 'Lobster', cursive;
+            font-size: clamp(1.6rem, 7vw, 2.6rem);
+            color: #BE185D;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .page-divider {
+            width: 60px;
+            height: 2.5px;
+            background: linear-gradient(90deg, #BE185D, #FDE047, #BE185D);
+            border-radius: 2px;
+            margin: 6px auto 14px;
+        }
+        .page-message {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+            color: #4C1D95;
+            line-height: 1.8;
+            max-width: 92%;
+            margin: 0 auto 12px;
+        }
+        .page-signature {
+            font-family: 'Lobster', cursive;
+            font-size: clamp(1.1rem, 4vw, 1.5rem);
+            color: #BE185D;
+            margin-top: 4px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+        .page-signature::before {
+            content: '— ';
+            color: #FDE047;
+        }
+        .page-number {
+            position: absolute;
+            bottom: 14px;
+            right: 18px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            font-size: 0.7rem;
+            color: #BE185D;
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        /* ----- Close Button ----- */
+        .close-btn {
+            position: absolute;
+            bottom: -58px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            padding: 10px 30px;
+            background: rgba(190, 24, 93, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(253, 224, 71, 0.25);
+            border-radius: 40px;
+            color: #FDF2F8;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .close-btn:hover {
+            background: rgba(190, 24, 93, 0.95);
+            border-color: #FDE047;
+            transform: translateX(-50%) scale(1.04);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+        }
+        .book.open .close-btn {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ----- Open hint ----- */
+        .open-hint {
+            position: absolute;
+            bottom: -44px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            color: rgba(253, 224, 71, 0.6);
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: opacity 0.6s ease;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .book.open .open-hint {
+            opacity: 0;
+        }
+
+        /* ----- Click outside catcher ----- */
+        .click-catcher {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .click-catcher.active {
+            pointer-events: auto;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 480px) {
+            .book-wrapper {
+                padding: 8px;
+                min-height: 70vh;
+            }
+            .book-page {
+                padding: 18px 14px;
+            }
+            .close-btn {
+                bottom: -50px;
+                padding: 8px 20px;
+                font-size: 0.8rem;
+            }
+            .book-cover {
+                padding: 14px;
+            }
+            .cover-decoration {
+                bottom: 14%;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .page-heading {
+                font-size: 1.3rem;
+            }
+            .page-message {
+                font-size: 0.75rem;
+                line-height: 1.6;
+            }
+            .page-signature {
+                font-size: 0.95rem;
+            }
+            .cover-title {
+                font-size: 2rem;
+            }
+            .cover-sub {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="click-catcher" id="clickCatcher"></div>
+
+    <div class="book-wrapper">
+        <div class="book" id="book">
+
+            <!-- Book Page (inside) -->
+            <div class="book-page" id="bookPage">
+                <h2 class="page-heading">Happy Friendship Day,
+Dear Friend😁!</h2>
+                <div class="page-divider"></div>
+                <p class="page-message">
+                    They say friends are the family we choose, and I'm so grateful I chose you—or maybe we chose each other.
+                    Through every late-night talk, every tear, every burst of uncontrollable laughter, and every dream we've
+                    woven together, you have been my safe place and my greatest cheerleader. In a world that constantly tries
+                    to box us in, we've built a sanctuary in our friendship, lifting each other higher, celebrating every win,
+                    and holding space for every vulnerability. Thank you for the endless cups of coffee, the adventures, the
+                    gossip, and the unwavering support. Our bond is a beautiful, chaotic, and irreplaceable kind of magic.
+                    Here's to us—and to a friendship that only grows deeper with time.
+                </p>
+                <div class="page-signature">by somiran</div>
+                <span class="page-number">✿ 01 ✿</span>
+            </div>
+
+            <!-- Book Cover (front) -->
+            <div class="book-cover" id="bookCover">
+                <div class="cover-title">Friendship</div>
+                <div class="cover-sub">Day</div>
+                <div class="cover-decoration"></div>
+            </div>
+
+            <button class="close-btn" id="closeBtn">✕ Close Book</button>
+            <div class="open-hint">✦ click to open ✦</div>
+
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ---------- DOM refs ----------
+            const book = document.getElementById('book');
+            const closeBtn = document.getElementById('closeBtn');
+            const openHint = document.querySelector('.open-hint');
+            const clickCatcher = document.getElementById('clickCatcher');
+            const page = document.getElementById('bookPage');
+
+            let isOpen = false;
+            let isAnimating = false;
+
+            // ---------- Open / Close ----------
+            function openBook() {
+                if (isOpen || isAnimating) return;
+                isAnimating = true;
+
+                book.classList.add('open');
+                isOpen = true;
+                clickCatcher.classList.add('active');
+                if (openHint) openHint.textContent = '✦ click outside to close ✦';
+
+                setTimeout(() => { isAnimating = false; }, 1500);
+            }
+
+            function closeBook() {
+                if (!isOpen || isAnimating) return;
+                isAnimating = true;
+
+                book.classList.remove('open');
+                isOpen = false;
+                clickCatcher.classList.remove('active');
+                if (openHint) openHint.textContent = '✦ click to open ✦';
+
+                setTimeout(() => { isAnimating = false; }, 1500);
+            }
+
+            function toggleBook() {
+                if (isOpen) closeBook();
+                else openBook();
+            }
+
+            // ---------- Event listeners ----------
+            book.addEventListener('click', function(e) {
+                if (e.target.closest('.close-btn')) return;
+                toggleBook();
+            });
+
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                closeBook();
+            });
+
+            clickCatcher.addEventListener('click', function() {
+                if (isOpen) closeBook();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isOpen) closeBook();
+            });
+
+            // ---------- Handle overflow on page content ----------
+            function checkOverflow() {
+                if (page.scrollHeight > page.clientHeight) {
+                    page.style.overflowY = 'auto';
+                    page.style.justifyContent = 'flex-start';
+                    page.style.paddingTop = '16px';
+                } else {
+                    page.style.overflowY = 'visible';
+                    page.style.justifyContent = 'center';
+                    page.style.paddingTop = '28px';
+                }
+            }
+            const observer = new ResizeObserver(checkOverflow);
+            observer.observe(page);
+            window.addEventListener('orientationchange', () => setTimeout(checkOverflow, 400));
+            setTimeout(checkOverflow, 600);
+
+            // ---------- Prevent double-tap zoom on mobile ----------
+            let lastTap = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTap < 300 && e.target.closest('.book')) {
+                    e.preventDefault();
+                }
+                lastTap = now;
+            }, { passive: false });
+
+            console.log('🌸 Vertical Friendship Book (Bestie) ready!');
+            console.log('✍️ Made with love by somiran');
+
+        })();
+    </script>
+
+</body>
+</html>
